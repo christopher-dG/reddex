@@ -25,5 +25,5 @@ reddex-*.tar
 # Ignore library application lockfile.
 mix.lock
 
-# Ignore library application configuration.
-config/
+# Ignore credential files.
+.env
