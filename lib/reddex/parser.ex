@@ -1,23 +1,23 @@
 defmodule Reddex.Parser do
-  @moduledoc "Parses data into structs."
+  @moduledoc false
 
-  alias Reddex.API.Subreddit
-  alias Reddex.API.User
-  require Logger
+  @doc """
+  Parses some data.
 
-  @kind_user "t2"
-  @kind_subreddit "t5"
+  ## Examples
 
-  def parse(%{kind: @kind_user, data: data}) do
-    struct(User, data)
-  end
+      iex> Reddex.Parser.parse(%{data: %{id: 1}})
+      %{id: 1}
 
-  def parse(%{kind: @kind_subreddit, data: data}) do
-    struct(Subreddit, data)
-  end
+      iex> Reddex.Parser.parse(%{children: [%{id: 1}, %{id: 2}]})
+      [%{id: 1}, %{id: 2}]
 
-  def parse(%{kind: kind, data: data}) do
-    Logger.warn("Unknown type '#{kind}' (returning unparsed)")
-    data
-  end
+      iex> Reddex.Parser.parse(:some_other_data)
+      :some_other_data
+  """
+  def parse(%{data: data}), do: parse(data)
+  def parse(%{json: json}), do: parse(json)
+  def parse(%{things: things}), do: Enum.map(things, &parse/1)
+  def parse(%{children: children}), do: Enum.map(children, &parse/1)
+  def parse(data), do: data
 end

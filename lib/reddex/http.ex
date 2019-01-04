@@ -9,7 +9,11 @@ defmodule Reddex.HTTP do
   @base_url "https://oauth.reddit.com"
 
   @type error :: {:error, {:tesla, term} | {:status, 100..199 | 300..599}}
+  @type listing :: [%{name: String.t()}]
+  @type listing_resp :: {:ok, listing} | error
+  @type post_resp :: {:ok, term} | error
 
+  @doc false
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, %{remaining: 1, reset: 0}, name: __MODULE__)
   end
@@ -95,12 +99,14 @@ defmodule Reddex.HTTP do
   defp client do
     Tesla.client([
       {Tesla.Middleware.BaseUrl, @base_url},
-      {Tesla.Middleware.JSON, engine_opts: [keys: :atoms]},
       {Tesla.Middleware.Headers,
        [
          {"authorization", Auth.token()},
          {"user-agent", Application.get_env(:reddex, :user_agent)}
-       ]}
+       ]},
+      Tesla.Middleware.FormUrlencoded,
+      Tesla.Middleware.FollowRedirects,
+      {Tesla.Middleware.DecodeJson, engine_opts: [keys: :atoms]}
     ])
   end
 end

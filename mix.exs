@@ -7,7 +7,8 @@ defmodule Reddex.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      docs: docs()
     ]
   end
 
@@ -24,6 +25,14 @@ defmodule Reddex.MixProject do
       {:hackney, "~> 1.14"},
       {:jason, "~> 1.1"},
       {:tesla, "~> 1.2"}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      extras: ["README.md"],
+      source_url: "https://github.com/christopher-dG/reddex"
     ]
   end
 end

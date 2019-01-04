@@ -1,5 +1,5 @@
 defmodule Reddex.Auth do
-  @moduledoc "Generates and refreshes OAuth tokens."
+  @moduledoc false
 
   alias Tesla.Middleware
   require Logger
@@ -38,19 +38,16 @@ defmodule Reddex.Auth do
   end
 
   # Gets an OAuth token.
-  @spec get_token :: %{access_token: String.t(), expires_in: integer}
+  @spec get_token :: %{token: String.t(), expiry: integer}
   defp get_token do
     client =
       Tesla.client([
-        Middleware.FormUrlencoded,
-        {Middleware.DecodeJson, engine_opts: [keys: :atoms]},
+        {Middleware.Headers, [{"user-agent", Application.get_env(:reddex, :user_agent)}]},
         {Middleware.BasicAuth,
          username: Application.get_env(:reddex, :client_id),
          password: Application.get_env(:reddex, :client_secret)},
-        {Middleware.Headers,
-         [
-           {"user-agent", Application.get_env(:reddex, :user_agent)}
-         ]}
+        Middleware.FormUrlencoded,
+        {Middleware.DecodeJson, engine_opts: [keys: :atoms]}
       ])
 
     body = %{

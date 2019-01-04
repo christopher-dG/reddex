@@ -1,8 +1,5 @@
 defmodule ReddexTest do
   use ExUnit.Case
-  doctest Reddex
-
-  test "greets the world" do
-    assert Reddex.hello() == :world
-  end
+  doctest Reddex.Parser
+  doctest Reddex.Stream
 end
