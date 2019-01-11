@@ -2,6 +2,7 @@ defmodule Reddex.Stream do
   @moduledoc "Streams listings."
 
   alias Reddex.HTTP
+  import Reddex.Utils
   require Logger
 
   @default_interval 30_000
@@ -132,25 +133,39 @@ defmodule Reddex.Stream do
   # Retries a listing function until it succeeds.
   @spec retry((keyword -> HTTP.listing()), keyword) :: HTTP.listing()
   defp retry(fun, opts) do
+    retry(fun, opts, 0)
+  end
+
+  @spec retry((keyword -> HTTP.listing()), keyword, non_neg_integer) :: HTTP.listing()
+  defp retry(fun, opts, n) when is_integer(n) do
+    exp_wait(n)
+
     case fun.(opts) do
       {:ok, els} ->
         els
 
       {:error, reason} ->
         Logger.warn("Streamed function #{inspect(fun)} failed (retrying): #{inspect(reason)}")
-        retry(fun, opts)
+        retry(fun, opts, n + 1)
     end
   end
 
   @spec retry((term, keyword -> HTTP.listing()), term, keyword) :: HTTP.listing()
   defp retry(fun, arg, opts) do
+    retry(fun, arg, opts, 0)
+  end
+
+  @spec retry((term, keyword -> HTTP.listing()), term, keyword, non_neg_integer) :: HTTP.listing()
+  defp retry(fun, arg, opts, n) do
+    exp_wait(n)
+
     case fun.(arg, opts) do
       {:ok, els} ->
         els
 
       {:error, reason} ->
         Logger.warn("Streamed function #{inspect(fun)} failed (retrying): #{inspect(reason)}")
-        retry(fun, arg, opts)
+        retry(fun, arg, opts, n + 1)
     end
   end
 end

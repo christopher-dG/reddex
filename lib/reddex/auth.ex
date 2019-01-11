@@ -2,6 +2,7 @@ defmodule Reddex.Auth do
   @moduledoc false
 
   alias Tesla.Middleware
+  import Reddex.Utils
   require Logger
   use GenServer
 
@@ -38,8 +39,10 @@ defmodule Reddex.Auth do
   end
 
   # Gets an OAuth token.
-  @spec get_token :: %{token: String.t(), expiry: integer}
-  defp get_token do
+  @spec get_token(non_neg_integer) :: %{token: String.t(), expiry: integer}
+  defp get_token(n \\ 0) do
+    exp_wait(n)
+
     client =
       Tesla.client([
         {Middleware.Headers, [{"user-agent", Application.get_env(:reddex, :user_agent)}]},
@@ -67,11 +70,11 @@ defmodule Reddex.Auth do
         body = #{inspect(body)}
         """)
 
-        get_token()
+        get_token(n + 1)
 
       {:error, reason} ->
         Logger.warn("OAuth token refresh failed (retrying): #{inspect(reason)}")
-        get_token()
+        get_token(n + 1)
     end
   end
 
