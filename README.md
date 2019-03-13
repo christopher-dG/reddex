@@ -18,7 +18,7 @@ The existing features are:
 Add the following to `deps/0` in `mix.exs`:
 
 ```elixir
-{:reddex, github: "christopher-dG/reddex"}
+{:reddex, "~> 0.1"}
 ```
 
 ## Configuration

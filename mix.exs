@@ -8,7 +8,12 @@ defmodule Reddex.MixProject do
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      package: package(),
+      name: "reddex",
+      description: "Reddit API client.",
+      source_url: "https://github.com/christopher-dG/reddex",
+      homepage_url: "https://github.com/christopher-dG/reddex"
     ]
   end
 
@@ -33,6 +38,15 @@ defmodule Reddex.MixProject do
       main: "readme",
       extras: ["README.md"],
       source_url: "https://github.com/christopher-dG/reddex"
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{
+        GitHub: "https://github.com/christopher-dG/reddex"
+      }
     ]
   end
 end
